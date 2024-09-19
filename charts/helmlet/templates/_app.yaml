@@ -1,0 +1,26 @@
+{{- define "helmlet.app" -}}
+{{- if .Values.configMap.data }}
+{{ include "helmlet.configmap" . }}
+{{- end }}
+
+{{- if .Values.image.repository }}
+{{ include "helmlet.deployment" . }}
+{{- end }}
+
+{{- if .Values.persistence.enabled }}
+{{ include "helmlet.pvc" . }}
+{{- end }}
+
+{{ include "helmlet.hpa" . }}
+{{ include "helmlet.ingress" . }}
+
+{{- if .Values.secret }}
+{{ include "helmlet.secret" . }}
+{{- end }}
+
+{{ include "helmlet.service" . }}
+
+{{ include "helmlet.serviceaccount" . }}
+{{ include "helmlet.servicemonitor" . }}
+{{ include "helmlet.podmonitor" . }}
+{{- end }}

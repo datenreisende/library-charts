@@ -1,0 +1,332 @@
+# Default values for helmlet.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Replica count
+# The number of pod replicas to be created for the deployment.
+# Example:
+# replicaCount: 1
+replicaCount: 1
+
+# Autoscaling
+# If enabled, the deployment is configured for horizontal pod autoscaling.
+# ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
+# Example:
+# autoscaling:
+#   enabled: false
+#   minReplicas: 1
+#   maxReplicas: 2
+#   targetCPUUtilizationPercentage: 80
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80
+
+# Pod image
+# The image used for the container in the pod.
+# ref: https://kubernetes.io/docs/concepts/containers/images/
+# Example:
+# image:
+#   repository: nginx
+#   pullPolicy: IfNotPresent
+#   tag: stable
+image:
+  repository: "nginx"
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+# Pod image pull secrets
+# Secrets used to pull images from private registries.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+# Example:
+# imagePullSecrets:
+#   - name: secret-name
+#
+# Example to create a private registry secret:
+# $ kubectl create secret docker-registry myregistrykey --docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL
+# $ kubectl get secret myregistrykey --output=yaml
+imagePullSecrets: []
+
+# Init containers
+# Additional containers to run before the main container.
+# ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+# Example:
+# initContainers:
+#   - name: init-container
+#     image: busybox
+#     command: ['sh', '-c', 'echo "Hello, World!"']
+initContainers: []
+
+# Liveness and readiness probes
+# These are used to ensure the container is healthy and ready to serve traffic.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+# Example:
+# livenessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+#   initialDelaySeconds: 5
+#   periodSeconds: 10
+#   timeoutSeconds: 5
+#   successThreshold: 1
+#   failureThreshold: 3
+#
+# readinessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+#   initialDelaySeconds: 5
+#   periodSeconds: 10
+#   timeoutSeconds: 5
+#   successThreshold: 1
+#   failureThreshold: 3
+livenessProbe: {}
+readinessProbe: {}
+
+# Add extra environment variables
+# These environment variables will be passed into the container.
+# ref: https://kubernetes.io/docs/concepts/configuration/environment-variables/
+# Example:
+# envVars:
+#   - name: MY_ENV_VAR
+#     value: my-env-var-value
+envVars: []
+
+# Add extra environment variables from a configMap
+# These environment variables will be loaded from a configMap.
+# ref: https://kubernetes.io/docs/concepts/configuration/configmap/
+# Example:
+# configMap:
+#   enabled: true
+#   name: my-config
+configMap: {}
+
+# Add extra environment variables from a Secret
+# These environment variables will be loaded from a Secret.
+# ref: https://kubernetes.io/docs/concepts/configuration/secret/
+# Example:
+# secret:
+#   enabled: true
+#   name: my-secret
+#   data: {}
+#   stringData: {}
+secret: {}
+
+# Service Account
+# Specify details for the service account to be used by the pod.
+# ref: https://kubernetes.io/docs/concepts/configuration/service-accounts/
+# Example:
+# serviceAccount:
+#   create: true
+#   automount: true
+#   annotations: {}
+#   name: ""
+serviceAccount: {}
+
+# Pod Annotations
+# Annotations to be added to the pod.
+# ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+# Example:
+# podAnnotations:
+#   prometheus.io/scrape: "true"
+podAnnotations: {}
+
+# Pod Labels
+# Labels to be added to the pod.
+# ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+# Example:
+# podLabels:
+#   app.kubernetes.io/name: myapp
+podLabels: {}
+
+# Pod Security Context
+# Security settings applied at the pod level.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+# Example:
+# podSecurityContext:
+#   runAsUser: 1000
+#   fsGroup: 2000
+#   runAsNonRoot: true
+#   readOnlyRootFilesystem: true
+podSecurityContext: {}
+
+# Security Context
+# Security settings applied at the container level.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+# Example:
+# securityContext:
+#   runAsUser: 1000
+#   capabilities:
+#     drop:
+#       - ALL
+securityContext: {}
+
+# Service
+# Configure the service that exposes the pod.
+# ref: https://kubernetes.io/docs/concepts/services-networking/service/
+# Example:
+# service:
+#   type: ClusterIP
+#   port: 80
+#   targetPort: 80
+#   nodePort: 30001
+service:
+  type: ClusterIP
+  port: 3001
+
+# Ingress
+# Configure the ingress resource to expose the application externally.
+# ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+# Example:
+# ingress:
+#   enabled: true
+#   className: ""
+#   annotations: {}
+#   hosts:
+#     - host: chart-example.local
+#       paths:
+#         - path: /
+#           pathType: ImplementationSpecific
+#   tls:
+#     - secretName: chart-example-tls
+#       hosts:
+#         - chart-example.local
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+# Resources
+# Configure resource requests and limits for the container.
+# ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+# Example:
+# resources:
+#   limits:
+#     cpu: 100m
+#     memory: 128Mi
+#   requests:
+#     cpu: 100m
+#     memory: 128Mi
+resources: {}
+
+# Enable Prometheus monitoring
+# If enabled, the Prometheus Operator ServiceMonitor resource is created.
+# ref: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
+# Example:
+# serviceMonitor:
+#   enabled: false
+#   namespace: monitoring
+#   additionalLabels: {}
+#   endpoints:
+#     - port: http
+#       path: /metrics
+#       interval: 15s
+#       scrapeTimeout: 10s
+serviceMonitor: {}
+
+# Enable Prometheus monitoring using PodMonitor
+# If enabled, the Prometheus Operator PodMonitor resource is created.
+# ref: https://prometheus.io/docs/prometheus-operator/latest/operator/#podmonitor
+# Example:
+# podMonitor:
+#   enabled: false
+#   namespace: monitoring
+#   additionalLabels: {}
+#   podMetricsEndpoints:
+#     - port: metrics
+#       path: /metrics
+#       interval: 30s
+#       scrapeTimeout: 10s
+podMonitor: {}
+
+# Enable persistence using Persistent Volume Claims
+# If enabled, a persistent volume claim (PVC) is created to persist data.
+# ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+# ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+persistence:
+  enabled: false
+  accessMode: ReadWriteOnce
+  size: 2Gi
+  mountPath: /var/www/html
+  volumeName: html
+  # existingClaim: ""
+  # storageClass: ""  # If not specified, the default storage class is used.
+
+# Additional volumes (e.g., config maps, secrets, etc.)
+# Example:
+# additionalVolumes:
+#   - name: config
+#     configMap:
+#       name: my-config
+additionalVolumes: []
+
+# Additional volume mounts (e.g., config maps, secrets, etc.)
+# Example:
+# additionalVolumeMounts:
+#   - name: config
+#     mountPath: /etc/config
+#     readOnly: true
+additionalVolumeMounts: []
+
+# Node selector
+# Specify node labels for pod assignment.
+# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+# Example:
+# nodeSelector:
+#   kubernetes.io/os: linux
+#   kubernetes.io/arch: amd64
+nodeSelector: {}
+
+# Toleration labels
+# Specify tolerations to allow the pod to be scheduled on nodes with taints.
+# ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+# Example:
+# tolerations:
+#   - key: "key"
+#     operator: "Equal"
+#     value: "value"
+#     effect: "NoSchedule"
+tolerations: []
+
+# Affinity
+# Specify affinity rules for pod placement.
+# ref: https://kubernetes.io/docs/concepts/configuration/assign
+# Example:
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#         - matchExpressions:
+#           - key: kubernetes.io/e2e-az-name
+#             operator: In
+#             values:
+#               - e2e-az1
+#               - e2e-az2
+#   podAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       - labelSelector:
+#           matchExpressions:
+#             - key: security
+#               operator: In
+#               values:
+#                 - S1
+#         topologyKey: failure-domain.beta.kubernetes.io/zone
+#   podAntiAffinity:
+#     preferredDuringSchedulingIgnoredDuringExecution:
+#       - weight: 100
+#         podAffinityTerm:
+#           labelSelector:
+#             matchExpressions:
+#               - key: security
+#                 operator: In
+#                 values:
+#                   - S1
+#           topologyKey: failure-domain.beta.kubernetes.io/zone
+affinity: {}

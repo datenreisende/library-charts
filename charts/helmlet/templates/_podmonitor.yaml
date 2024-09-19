@@ -1,0 +1,37 @@
+{{- define "helmlet.podmonitor" -}}
+{{- if (and .Values.podMonitor (or (not (kindIs "map" .Values.podMonitor)) .Values.podMonitor.enabled)) -}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "helmlet.fullname" . }}
+  {{- with (get .Values.podMonitor "namespace") }}
+  namespace: {{ . }}
+  {{- end }}
+  labels:
+    {{- include "helmlet.labels" . | nindent 4 }}
+    {{- with (get .Values.podMonitor "additionalLabels") }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  podMetricsEndpoints:
+  {{- range (get .Values.podMonitor "podMetricsEndpoints" | default (list (dict "port" "metrics"))) }}
+  - port: {{ .port }}
+    {{- with .path }}
+    path: {{ . }}
+    {{- end }}
+    {{- with .interval }}
+    interval: {{ . }}
+    {{- end }}
+    {{- with .scrapeTimeout }}
+    scrapeTimeout: {{ . }}
+    {{- end }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "helmlet.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}
+{{- end }}

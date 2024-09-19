@@ -1,0 +1,21 @@
+apiVersion: v2
+name: helmlet
+description: A Helm Library Chart for Kubernetes deployments
+home: https://datenreisende.github.io/charts/helmlet/
+type: library
+version: 0.1.5
+appVersion: "0.1.5"
+
+keywords:
+  - deployment
+  - service
+  - ingress
+  - library
+
+maintainers:
+  - name: Ole Kleinschmidt
+
+sources:
+  - https://datenreisende.github.io/charts/helmlet/
+
+dependencies: []

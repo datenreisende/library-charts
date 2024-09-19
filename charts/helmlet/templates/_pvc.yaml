@@ -1,0 +1,20 @@
+{{- define "helmlet.pvc" -}}
+---
+{{- if .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "helmlet.fullname" . }}-{{ .Values.persistence.volumeName }}
+  labels:
+    app: {{ include "helmlet.name" . }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}
+  {{- if .Values.persistence.storageClass | default "" }}
+  storageClassName: {{ .Values.persistence.storageClass | default "default" }}
+  {{- end }}
+{{- end }}
+{{- end }}

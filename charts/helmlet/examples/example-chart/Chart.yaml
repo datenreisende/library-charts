@@ -1,0 +1,19 @@
+apiVersion: v2
+name: example-chart
+description: An example Helm chart that uses the helmlet library chart for deploying applications.
+version: 0.1.2
+appVersion: "0.1.2"
+
+dependencies:
+  - name: helmlet
+    version: 0.1.5 
+    repository: "https://datenreisende.github.io/charts/"
+
+keywords:
+  - example
+  - application
+  - helmlet
+  
+maintainers:
+  - name: Example Maintainer
+    email: example@example.org

@@ -1,0 +1,37 @@
+{{- define "helmlet.servicemonitor" -}}
+{{- if (and .Values.serviceMonitor (or (not (kindIs "map" .Values.serviceMonitor)) .Values.serviceMonitor.enabled)) -}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "helmlet.fullname" . }}
+  {{- with (get .Values.serviceMonitor "namespace") }}
+  namespace: {{ . }}
+  {{- end }}
+  labels:
+    {{- include "helmlet.labels" . | nindent 4 }}
+    {{- with (get .Values.serviceMonitor "additionalLabels") }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  endpoints:
+  {{- range (get .Values.serviceMonitor "endpoints" | default (list (dict "port" "http"))) }}
+  - port: {{ .port }}
+    {{- with .path }}
+    path: {{ . }}
+    {{- end }}
+    {{- with .interval }}
+    interval: {{ . }}
+    {{- end }}
+    {{- with .scrapeTimeout }}
+    scrapeTimeout: {{ . }}
+    {{- end }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "helmlet.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}
+{{- end }}
