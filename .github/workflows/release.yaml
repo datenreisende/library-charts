@@ -1,4 +1,4 @@
-name: Release Helmlet Chart
+name: Release Charts
 
 on:
   push:
@@ -28,11 +28,13 @@ jobs:
         with:
           version: v3.9.0
 
-      # Package and Publish helmlet chart to ghcr.io
-      - name: Generate helmlet Chart
+      # Publish OCI charts to ghcr.io
+      - name: Generate charts
         run: |
           mkdir -p .cr-release-packages
-          helm package charts/helmlet --destination .cr-release-packages
+          for d in charts/* ; do
+            helm package "$d" --destination .cr-release-packages
+          done
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -41,16 +43,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.REGISTRY_SECRET }}
 
-      - name: Publish helmlet Chart to GHCR
+      - name: Publish Charts to GHCR
         run: |
-          for pkg in .cr-release-packages/helmlet-*.tgz; do
-            echo "${pkg}"
+          for pkg in .cr-release-packages/*; do
+            echo ${pkg}
+            if [ -z "${pkg:-}" ]; then
+              break
+            fi
             helm push "${pkg}" oci://ghcr.io/datenreisende/charts
           done
 
   release-gh-pages:
     runs-on: ubuntu-latest
-    needs: release-ghcr
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -67,8 +71,8 @@ jobs:
         with:
           version: v3.9.0
 
-      # Publish helmlet chart to gh-pages branch
-      - name: Publish helmlet Chart to GitHub Pages
+      # Publish charts to gh-pages branch
+      - name: Publish charts to GitHub Pages
         uses: helm/chart-releaser-action@v1.5.0
         with:
           config: .github/configs/cr.yaml
@@ -77,7 +81,7 @@ jobs:
 
   update-readme:
     runs-on: ubuntu-latest
-    needs: release-gh-pages
+    needs: release-ghcr
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -98,13 +102,15 @@ jobs:
         run: |
           echo "| Chart Name | Version | Type |" > charts-table.txt
           echo "|------------|---------|------|" >> charts-table.txt
-          chart_name="helmlet"
-          chart_version=$(helm show chart charts/helmlet | grep '^version:' | awk '{print $2}')
-          chart_type=$(helm show chart charts/helmlet | grep '^type:' | awk '{print $2}')
-          if [ -z "$chart_type" ]; then
-            chart_type="Library"
-          fi
-          echo "| $chart_name | $chart_version | $chart_type |" >> charts-table.txt
+          for d in charts/* ; do
+            chart_name=$(basename "$d")
+            chart_version=$(helm show chart "$d" | grep '^version:' | awk '{print $2}')
+            chart_type=$(helm show chart "$d" | grep '^type:' | awk '{print $2}')
+            if [ -z "$chart_type" ]; then
+              chart_type="Application" # Default type if not specified
+            fi
+            echo "| $chart_name | $chart_version | $chart_type |" >> charts-table.txt
+          done
 
       - name: Insert Table into README
         run: |
@@ -119,5 +125,5 @@ jobs:
       - name: Commit changes
         run: |
           git add README.md
-          git commit -m "docs: update README with Helm charts table for helmlet"
+          git commit -m "docs: update README with Helm charts table including chart type"
           git push
