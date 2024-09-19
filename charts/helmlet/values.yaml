@@ -2,6 +2,16 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# DNS Config
+# Configure the DNS settings for the pod.
+# ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/
+# Example:
+# dnsConfig:
+#   options:
+#     - name: ndots
+#       value: "2"
+dnsConfig: {}
+
 # Replica count
 # The number of pod replicas to be created for the deployment.
 # Example:
