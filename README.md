@@ -3,6 +3,12 @@
 Welcome to the official **Datenreisende** Helm Library Chart repository! This repository hosts the Helm library charts used to standardize and simplify the deployment of applications and services in my HomeLab. These library charts provide reusable templates and best practices that can be shared across multiple Helm charts.
 
 
+
+## Available Helm Charts
+
+| Chart Name | Version | Type |
+|------------|---------|------|
+| helmlet | 0.1.7 | library |
 ## How to Add This Repository
 To add this Helm library chart repository to your local Helm client, you can use the following command:
 
